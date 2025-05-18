@@ -18,7 +18,6 @@ install.packages("dplyr")
 install.packages("maps")
 install.packages("mapproj")
 install.packages('lmerTest')
-library(lmerTest)
 install.packages('MuMIn')
 library(MuMIn)
 library(forecast)
@@ -27,6 +26,7 @@ library(dplyr)
 library(maps)
 library(mapproj)
 library(lme4)
+library(lmerTest)
 
 
 
@@ -61,7 +61,9 @@ byYear <- crabData %>%
     cpueSD <- sd(cpue, na.rm = TRUE),
     depthMean <- mean(bottom_depth, na.rm = TRUE),
     surfacetempMean <- mean(surface_temperature, na.rm = TRUE),
-    bottomtempMean <- mean(bottom_temperature, na.rm = TRUE)
+    bottomtempMean <- mean(bottom_temperature, na.rm = TRUE),
+    latitudeMean <- mean(latitude, na.rm = TRUE),
+    longitudeMean <- mean(longitude, na.rm = TRUE)
   )
 
 byYear
@@ -73,6 +75,8 @@ plot(byYear$year, byYear$`cpueSD <- sd(cpue, na.rm = TRUE)`, log = "y") # 642 cp
 plot(byYear$year, byYear$`depthMean <- mean(bottom_depth, na.rm = TRUE)`)
 plot(byYear$year, byYear$`surfacetempMean <- mean(surface_temperature, na.rm = TRUE)`)
 plot(byYear$year, byYear$`bottomtempMean <- mean(bottom_temperature, na.rm = TRUE)`)
+plot(byYear$year, byYear$`latitudeMean <- mean(latitude, na.rm = TRUE)`)
+plot(byYear$year, byYear$`longitudeMean <- mean(longitude, na.rm = TRUE)`)
 
 
 #---------- maleData byYear ----------#
@@ -86,7 +90,9 @@ malebyYear <- maleData %>%
     m.cpueSD <- sd(cpue, na.rm = TRUE),
     m.depthMean <- mean(bottom_depth, na.rm = TRUE),
     m.surfacetempMean <- mean(surface_temperature, na.rm = TRUE),
-    m.bottomtempMean <- mean(bottom_temperature, na.rm = TRUE)
+    m.bottomtempMean <- mean(bottom_temperature, na.rm = TRUE),
+    m.latitudeMean <- mean(latitude, na.rm = TRUE),
+    m.longitudeMean <- mean(longitude, na.rm = TRUE)
   )
 
 malebyYear
@@ -98,6 +104,8 @@ plot(malebyYear$year, malebyYear$`m.cpueSD <- sd(cpue, na.rm = TRUE)`) # 642 cpu
 plot(malebyYear$year, malebyYear$`m.depthMean <- mean(bottom_depth, na.rm = TRUE)`)
 plot(malebyYear$year, malebyYear$`m.surfacetempMean <- mean(surface_temperature, na.rm = TRUE)`)
 plot(malebyYear$year, malebyYear$`m.bottomtempMean <- mean(bottom_temperature, na.rm = TRUE)`)
+plot(malebyYear$year, malebyYear$`m.latitudeMean <- mean(latitude, na.rm = TRUE)`)
+plot(malebyYear$year, malebyYear$`m.longitudeMean <- mean(longitude, na.rm = TRUE)`)
 
 #---------- femaleData byYear ----------#
 
@@ -110,10 +118,12 @@ femalebyYear <- femaleData %>%
     f.cpueSD <- sd(cpue, na.rm = TRUE),
     f.depthMean <- mean(bottom_depth, na.rm = TRUE),
     f.surfacetempMean <- mean(surface_temperature, na.rm = TRUE),
-    f.bottomtempMean <- mean(bottom_temperature, na.rm = TRUE)
+    f.bottomtempMean <- mean(bottom_temperature, na.rm = TRUE),
+    f.latitudeMean <- mean(latitude, na.rm = TRUE),
+    f.longitudeMean <- mean(longitude, na.rm = TRUE)
   )
 
-malebyYear
+femalebyYear
 
 plot(femalebyYear$year, femalebyYear$`f.haulMean <- mean(haul, na.rm = TRUE)`)
 plot(femalebyYear$year, femalebyYear$`f.haulSD <- sd(haul, na.rm = TRUE)`)
@@ -122,8 +132,43 @@ plot(femalebyYear$year, femalebyYear$`f.cpueSD <- sd(cpue, na.rm = TRUE)`) # 642
 plot(femalebyYear$year, femalebyYear$`f.depthMean <- mean(bottom_depth, na.rm = TRUE)`)
 plot(femalebyYear$year, femalebyYear$`f.surfacetempMean <- mean(surface_temperature, na.rm = TRUE)`)
 plot(femalebyYear$year, femalebyYear$`f.bottomtempMean <- mean(bottom_temperature, na.rm = TRUE)`)
+plot(femalebyYear$year, femalebyYear$`f.latitudeMean <- mean(latitude, na.rm = TRUE)`)
+plot(femalebyYear$year, femalebyYear$`f.longitudeMean <- mean(longitude, na.rm = TRUE)`)
 
 
+#---------- Plotting mean Male and Female landings per year ----------#
+
+crabYears
+
+plot(crabYears, malebyYear$`m.haulMean <- mean(haul, na.rm = TRUE)`, ylim = c(45, 110), type = "l", col = "blue", lwd = 2,
+     ylab = "Mean Crab Landings", xlab = "Year")
+lines(crabYears, femalebyYear$`f.haulMean <- mean(haul, na.rm = TRUE)`, col = "red", lwd = 2)
+points(crabYears, malebyYear$`m.haulMean <- mean(haul, na.rm = TRUE)`, col = "blue", pch = 16)
+points(crabYears, femalebyYear$`f.haulMean <- mean(haul, na.rm = TRUE)`, col = "red", pch = 16)
+
+legend("bottomright", legend = c("Male", "Female"),
+       col = c("blue", "red"), lty = 1, lwd = 2, pch = 16)
+
+#---------- Plotting mean cpue per sex by year ----------#
+
+plot(crabYears, log(malebyYear$`m.cpueMean <- mean(cpue, na.rm = TRUE)`),ylim = c(4,8), type = "l", col = "blue", lwd = 2,
+     ylab = "Log Mean CPUE", xlab = "Year")
+lines(crabYears, log(femalebyYear$`f.cpueMean <- mean(cpue, na.rm = TRUE)`), col = "red", lwd = 2)
+points(crabYears, log(malebyYear$`m.cpueMean <- mean(cpue, na.rm = TRUE)`), col = "blue", pch = 16)
+points(crabYears, log(femalebyYear$`f.cpueMean <- mean(cpue, na.rm = TRUE)`), col = "red", pch = 16)
+legend("topright", legend = c("Male", "Female"),
+       col = c("blue", "red"), lty = 1, lwd = 2, pch = 16)
+
+
+#---------- Plotting mean depth per sex by year ----------#
+
+plot(crabYears, malebyYear$`m.depthMean <- mean(bottom_depth, na.rm = TRUE)`, ylim = c(50, 80), type = "l", col = "blue", lwd = 2,
+     ylab = "Mean Depth", xlab = "Year")
+lines(crabYears, femalebyYear$`f.depthMean <- mean(bottom_depth, na.rm = TRUE)`, col = "red", lwd = 2)
+points(crabYears, malebyYear$`m.depthMean <- mean(bottom_depth, na.rm = TRUE)`, col = "blue", pch = 16)
+points(crabYears, femalebyYear$`f.depthMean <- mean(bottom_depth, na.rm = TRUE)`, col = "red", pch = 16)
+legend("topright", legend = c("Male", "Female"),
+       col = c("blue", "red"), lty = 1, lwd = 2, pch = 16)
 
 
 #---------- MALE location of landings ----------#
@@ -297,7 +342,6 @@ r.squaredGLMM(P)
 
 
 
-hist(log(maleData[,"cpue"])
 
 
 
